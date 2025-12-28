@@ -1,0 +1,142 @@
+.modal-body.dialog-iframe-bd {
+	overflow: hidden;
+	padding: 0;
+}
+
+.modal-dialog {
+	&:not(.dialog-iframe-modal):not(.modal-full-screen) {
+		position: relative;
+	}
+
+	&.dialog-iframe-modal {
+		max-width: none;
+	}
+
+	&.modal-dialog-sm {
+		max-width: $modal-md;
+	}
+
+	.yui3-resize-handles-wrapper {
+		pointer-events: all;
+
+		.yui3-resize-handle-inner-br {
+			bottom: 0;
+			right: 0;
+		}
+	}
+}
+.LogoutModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.LogoutModal .modal-content {
+  margin-top: 3rem;
+  background: #fff;
+  padding: 16px;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  width: 90vw;
+}
+.LogoutModal .modal-content h3 {
+  color: #03301E;
+  margin-bottom: 12px;
+}
+@media (min-width: 768px) {
+  .LogoutModal .modal-content {
+    width: 60vw;
+    padding: 24px;
+  }
+  .LogoutModal .modal-content h3 {
+    font-size: 24px !important;
+    margin-bottom: 32px;
+  }
+}
+@media (min-width: 1024px) {
+  .LogoutModal .modal-content {
+    width: 65vw;
+  }
+}
+@media (min-width: 1280px) {
+  .LogoutModal .modal-content {
+    width: 40vw;
+  }
+}
+.LogoutModal .modal-content .modal-body {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-inline-end: 1rem;
+  border: none;
+}
+.LogoutModal .modal-content .modal-body::-webkit-scrollbar {
+  width: 3px;
+}
+@media (min-width: 1024px) {
+  .LogoutModal .modal-content .modal-body::-webkit-scrollbar {
+    width: 8px;
+  }
+}
+.LogoutModal .modal-content .modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.LogoutModal .modal-content .modal-body::-webkit-scrollbar-thumb {
+  background-color: #03301E;
+  border-radius: 10px;
+}
+.LogoutModal .modal-content .modal-body::-webkit-scrollbar-thumb:hover {
+  background-color: black;
+}
+.LogoutModal .modal-content .modal-body::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+.LogoutModal .modal-content .modal-body p {
+  margin-bottom: 16px;
+  color: #6C737F;
+  font-size: 14px;
+}
+@media (min-width: 1024px) {
+  .LogoutModal .modal-content .modal-body p {
+    font-size: 16px;
+  }
+}
+.LogoutModal .modal-content .close {
+  position: absolute;
+  top: 16px;
+  left: 24px;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+  display: none;
+}
+.LogoutModal .modal-content .close:hover {
+  color: #12955f;
+}
+.LogoutModal .modal-content .modal-footer {
+  display: flex;
+  flex-direction: column;
+  border: none;
+}
+@media (min-width: 1024px) {
+  .LogoutModal .modal-content .modal-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border: none;
+  }
+}
+
+
+
+
+

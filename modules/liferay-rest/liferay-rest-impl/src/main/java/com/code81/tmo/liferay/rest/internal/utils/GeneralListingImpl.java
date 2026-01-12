@@ -38,26 +38,49 @@ public class GeneralListingImpl implements GeneralListing {
     private Searcher _searcher;
 
     @Override
-    public BooleanQuery buildFilterQuery(String date, String structureKey) {
+    public BooleanQuery buildFilterQuery(String date, String structureKey, Long structureId, String source) {
         BooleanQuery booleanQuery = _queries.booleanQuery();
 
         if (date != null) {
             Date parsedDate = parseUiDate(date);
             if (parsedDate != null) {
-                String start = formatIndexDate(startOfDay(parsedDate));
-                String end = formatIndexDate(endOfDay(parsedDate));
-                Query dateRange = _queries.rangeTerm("displayDate", true, true, start, end);
-                booleanQuery.addMustQueryClauses(dateRange);
+                if ("events".equalsIgnoreCase(structureKey)) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String dateValue = sdf.format(parsedDate);
+
+                    BooleanQuery nestedInner = _queries.booleanQuery();
+                    nestedInner.addMustQueryClauses(
+                            _queries.term("ddmFieldArray.ddmFieldName", "ddm__keyword__" + structureId + "__EventDate"),
+                            _queries.term("ddmFieldArray.ddmFieldValueKeyword_String_sortable", dateValue)
+                    );
+
+                    Query nestedQuery = _queries.nested("ddmFieldArray", nestedInner);
+                    booleanQuery.addMustQueryClauses(nestedQuery);
+                } else {
+                    String start = formatIndexDate(startOfDay(parsedDate));
+                    String end = formatIndexDate(endOfDay(parsedDate));
+                    Query dateRange = _queries.rangeTerm("displayDate", true, true, start, end);
+                    booleanQuery.addMustQueryClauses(dateRange);
+                }
             } else {
                 logger.warn("Unable to parse dateParam: " + date);
             }
         }
 
+        if("services".equalsIgnoreCase(structureKey) && source != null) {
+            BooleanQuery nestedInner = _queries.booleanQuery();
+            nestedInner.addMustQueryClauses(
+                    _queries.term("ddmFieldArray.ddmFieldName", "ddm__keyword__" + structureId + "__ServiceSource"),
+                    _queries.term("ddmFieldArray.ddmFieldValueKeyword_String_sortable", source.toLowerCase())
+            );
+            Query nestedQuery = _queries.nested("ddmFieldArray", nestedInner);
+            booleanQuery.addMustQueryClauses(nestedQuery);
+        }
         return booleanQuery;
     }
 
     @Override
-    public SearchResponse getSearchHits(long structureId, String structureKey, String keyword, String date, Integer pageSize, Integer pageNumber) {
+    public SearchResponse getSearchHits(long structureId, String structureKey, String keyword, String date, String source, Integer pageSize, Integer pageNumber) {
         ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
 
         int start = (pageNumber - 1) * pageSize;
@@ -82,7 +105,7 @@ public class GeneralListingImpl implements GeneralListing {
 
         builder.emptySearchEnabled(true);
 
-        Query filterQuery = this.buildFilterQuery(date, structureKey);
+        Query filterQuery = this.buildFilterQuery(date, structureKey, structureId, source);
         if (filterQuery != null) {
             builder.postFilterQuery(filterQuery);
         }

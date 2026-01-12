@@ -38,7 +38,8 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface ServicesResource {
 
 	public ServicesResponse getServices(
-			String keyword, String date, String page, String size)
+			String keyword, String source, String date, String page,
+			String size)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

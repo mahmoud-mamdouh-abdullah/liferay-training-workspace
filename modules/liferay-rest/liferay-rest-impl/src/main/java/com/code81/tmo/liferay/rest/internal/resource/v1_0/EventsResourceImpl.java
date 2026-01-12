@@ -57,7 +57,7 @@ public class EventsResourceImpl extends BaseEventsResourceImpl {
 		int pageNumber = (page != null && Integer.parseInt(page) > 0) ? Integer.parseInt(page) : 1;
 		int pageSize   = (size != null && Integer.parseInt(size) > 0) ? Integer.parseInt(size) : 10;
 
-		SearchResponse response = generalListing.getSearchHits(EVENTS_STRUCTURE_ID, "events", HtmlUtil.escape(keyword), date, pageSize, pageNumber);
+		SearchResponse response = generalListing.getSearchHits(EVENTS_STRUCTURE_ID, "events", HtmlUtil.escape(keyword), date, null, pageSize, pageNumber);
 
 		SearchHits hits = response.getSearchHits();
 		List<SearchHit> searchHits = hits.getSearchHits();

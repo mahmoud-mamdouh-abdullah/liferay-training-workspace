@@ -104,6 +104,12 @@ paths:
                   description: Keyword for Search
                   schema:
                       type: string
+                - name: source
+                  in: query
+                  required: false
+                  description: Service Source
+                  schema:
+                      type: string
                 - name: date
                   in: query
                   required: false

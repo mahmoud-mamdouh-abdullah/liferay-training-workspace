@@ -7,6 +7,11 @@ import com.code81.tmo.liferay.rest.internal.utils.GeneralListing;
 import com.code81.tmo.liferay.rest.internal.utils.GeneralValidation;
 import com.code81.tmo.liferay.rest.resource.v1_0.ServicesResource;
 
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -14,6 +19,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Node;
@@ -48,7 +54,7 @@ public class ServicesResourceImpl extends BaseServicesResourceImpl {
 	private GeneralListing generalListing;
 
 	@Override
-	public ServicesResponse getServices(String keyword, String date, String page, String size) throws Exception {
+	public ServicesResponse getServices(String keyword, String source, String date, String page, String size) throws Exception {
 		Locale locale = contextHttpServletRequest.getLocale();
 		String languageId = locale.toString();
 
@@ -57,7 +63,7 @@ public class ServicesResourceImpl extends BaseServicesResourceImpl {
 		int pageNumber = (page != null && Integer.parseInt(page) > 0) ? Integer.parseInt(page) : 1;
 		int pageSize   = (size != null && Integer.parseInt(size) > 0) ? Integer.parseInt(size) : 10;
 
-		SearchResponse response = generalListing.getSearchHits(SERVICES_STRUCTURE_ID, "services", HtmlUtil.escape(keyword), date, pageSize, pageNumber);
+		SearchResponse response = generalListing.getSearchHits(SERVICES_STRUCTURE_ID, "services", HtmlUtil.escape(keyword), date, source, pageSize, pageNumber);
 
 		SearchHits hits = response.getSearchHits();
 		List<SearchHit> searchHits = hits.getSearchHits();
@@ -116,7 +122,7 @@ public class ServicesResourceImpl extends BaseServicesResourceImpl {
 			Node sourceNode = contentDocument.selectSingleNode("/root/dynamic-element[@field-reference='ServiceSource']/dynamic-content");
 			if (sourceNode != null) {
 				logger.info("ServiceSource: " + sourceNode.getText());
-				service.setSource(sourceNode.getText());
+				service.setSource(getSourceValue(sourceNode.getText(), article, contextHttpServletRequest.getLocale()));
 			}
 
 			Node briefNode = contentDocument.selectSingleNode("/root/dynamic-element[@field-reference='ServiceBrief']/dynamic-content");
@@ -203,4 +209,39 @@ public class ServicesResourceImpl extends BaseServicesResourceImpl {
 			throw new BadRequestException("Invalid page size");
 		}
 	}
+
+	private String getSourceValue(String optionId, JournalArticle article, Locale locale) {
+
+		try {
+			DDMStructure ddmStructure =
+					DDMStructureLocalServiceUtil.getDDMStructure(
+							article.getDDMStructureId()
+					);
+
+			DDMFormField sourceField = null;
+
+			for (DDMFormField field : ddmStructure.getDDMFormFields(true)) {
+				if ("ServiceSource".equals(field.getFieldReference())) {
+					sourceField = field;
+					break;
+				}
+			}
+
+			if (sourceField == null) {
+				throw new IllegalStateException(
+						"DDM field with fieldReference 'ServiceSource' not found"
+				);
+			}
+
+			return sourceField
+					.getDDMFormFieldOptions()
+					.getOptionLabels(optionId)
+					.getString(locale);
+
+		} catch (Exception e) {
+			logger.error("Error mapping article to service: " + e.getMessage(), e);
+			return null;
+		}
+	}
+
 }

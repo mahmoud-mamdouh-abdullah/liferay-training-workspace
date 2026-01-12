@@ -55,6 +55,10 @@ public abstract class BaseServicesResourceImpl implements ServicesResource {
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "source"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
 				name = "date"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -78,6 +82,9 @@ public abstract class BaseServicesResourceImpl implements ServicesResource {
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.ws.rs.QueryParam("keyword")
 			String keyword,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@javax.ws.rs.QueryParam("source")
+			String source,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.ws.rs.QueryParam("date")
 			String date,

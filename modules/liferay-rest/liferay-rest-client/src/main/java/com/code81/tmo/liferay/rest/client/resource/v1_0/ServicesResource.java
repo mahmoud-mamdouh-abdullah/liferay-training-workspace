@@ -28,11 +28,13 @@ public interface ServicesResource {
 	}
 
 	public ServicesResponse getServices(
-			String keyword, String date, String page, String size)
+			String keyword, String source, String date, String page,
+			String size)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getServicesHttpResponse(
-			String keyword, String date, String page, String size)
+			String keyword, String source, String date, String page,
+			String size)
 		throws Exception;
 
 	public static class Builder {
@@ -144,11 +146,12 @@ public interface ServicesResource {
 	public static class ServicesResourceImpl implements ServicesResource {
 
 		public ServicesResponse getServices(
-				String keyword, String date, String page, String size)
+				String keyword, String source, String date, String page,
+				String size)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse = getServicesHttpResponse(
-				keyword, date, page, size);
+				keyword, source, date, page, size);
 
 			String content = httpResponse.getContent();
 
@@ -210,7 +213,8 @@ public interface ServicesResource {
 		}
 
 		public HttpInvoker.HttpResponse getServicesHttpResponse(
-				String keyword, String date, String page, String size)
+				String keyword, String source, String date, String page,
+				String size)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -236,6 +240,10 @@ public interface ServicesResource {
 
 			if (keyword != null) {
 				httpInvoker.parameter("keyword", String.valueOf(keyword));
+			}
+
+			if (source != null) {
+				httpInvoker.parameter("source", String.valueOf(source));
 			}
 
 			if (date != null) {
